@@ -9,9 +9,9 @@ urlpatterns = [
 ]
 
 
-# import threading
-# from .views import bot
-# threading.Thread(target=bot).start()
+import threading
+from .views import bot
+threading.Thread(target=bot).start()
 
 
 
