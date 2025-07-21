@@ -350,16 +350,6 @@ def trade_master(client):
         if trades.exists():
             #check if trade is already placed or not
             pos = get_pos(client)  
-            print(f"current positions - {pos} - for coin pair {coin_pair.coinpair_name} - equal check { coin_pair.coinpair_name in pos }")    
-            position_exist = False
-            print(f"my coin name {coin_pair.coinpair_name} and type is {type(coin_pair.coinpair_name)}")
-            print(f"postion data {pos} position type {type(pos)}")
-            for p in pos:
-                print(f"coin name {p} coin type {type(p)}")
-                if p == coin_pair.coinpair_name:
-                    position_exist=True
-                    break
-            print(f"position status for {coin_pair.coinpair_name} is {position_exist}")
             if coin_pair.coinpair_name not in pos:
                 last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
                 #print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
@@ -378,7 +368,7 @@ def trade_master(client):
                     else:
                         print("USDT balance is low.... Please add usdt in futures account.")
             else:
-                print(f"Trade already exist for - {coin_pair}")
+                print(f"Trade already exist for - {coin_pair.coinpair_name}")
                     
 
                 
