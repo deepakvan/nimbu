@@ -370,7 +370,7 @@ def trade_master(client):
                         set_mode(client, coin_pair, ORDER_TYPE)
                         set_leverage(client, coin_pair, capital_multiplier)  
                         amount = VOLUME * capital_multiplier  
-                        #place_order(client,[coin_pair,trade_data],amount)
+                        place_order(client,[coin_pair,trade_data],amount)
                         print("order placed for {0} and total money invested {1}, leverage {2} ".format(coin_pair,amount,LEVERAGE))
                     else:
                         print("USDT balance is low.... Please add usdt in futures account.")
