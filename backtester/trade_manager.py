@@ -350,7 +350,13 @@ def trade_master(client):
         if trades.exists():
             #check if trade is already placed or not
             pos = get_pos(client)  
-            print(f"current positions - {pos} - for coin pair {coin_pair} - equal check { coin_pair in pos }")     
+            print(f"current positions - {pos} - for coin pair {coin_pair} - equal check { coin_pair in pos }")    
+            position_exist = False
+            for p in pos:
+                if p == coin_pair:
+                    position_exist=True
+                    break
+            print(f"position status for {coin_pair} is {position_exist}")
             if coin_pair not in pos:
                 last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
                 #print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
@@ -364,12 +370,12 @@ def trade_master(client):
                         set_mode(client, coin_pair, ORDER_TYPE)
                         set_leverage(client, coin_pair, capital_multiplier)  
                         amount = VOLUME * capital_multiplier  
-                        place_order(client,[coin_pair,trade_data],amount)
+                        #place_order(client,[coin_pair,trade_data],amount)
                         print("order placed for {0} and total money invested {1}, leverage {2} ".format(coin_pair,amount,LEVERAGE))
                     else:
                         print("USDT balance is low.... Please add usdt in futures account.")
-                else:
-                    print(f"Trade already exist for - {coin_pair}")
+            else:
+                print(f"Trade already exist for - {coin_pair}")
                     
 
                 
