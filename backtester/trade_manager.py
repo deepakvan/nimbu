@@ -352,7 +352,10 @@ def trade_master(client):
             pos = get_pos(client)  
             print(f"current positions - {pos} - for coin pair {coin_pair} - equal check { coin_pair in pos }")    
             position_exist = False
+            print(f"my coin name {coin_pair} and type is {type{coin_pair}}")
+            print(f"postion data {pos} position type {type(pos)}")
             for p in pos:
+                print(f"coin name {p} coin type {type(p)}")
                 if p == coin_pair:
                     position_exist=True
                     break
