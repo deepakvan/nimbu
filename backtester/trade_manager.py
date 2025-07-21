@@ -350,27 +350,27 @@ def trade_master(client):
         if trades.exists():
             #check if trade is already placed or not
             pos = get_pos(client)  
-            print(f"current positions - {pos}")     
-            if coin_pair in pos:
-                    print(f"Trade already exist for - {coin_pair}")
-                    continue
-            last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
-            #print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
-            if not last_trade_is_completed:
-                ord = check_orders(client)
-                for elem in ord:
-                    if not elem['symbol'] in pos:
-                        close_open_orders(client, elem['symbol'])
-                print(f"Processing Order for {coin_pair} {trade_data['side']} side with TP - {trade_data['TP']} and SL - {trade_data['SL']}")
-                if get_balance_usdt(client)> 0:
-                    set_mode(client, coin_pair, ORDER_TYPE)
-                    set_leverage(client, coin_pair, capital_multiplier)  
-                    amount = VOLUME * capital_multiplier  
-                    place_order(client,[coin_pair,trade_data],amount)
-                    print("order placed for {0} and total money invested {1}, leverage {2} ".format(coin_pair,amount,LEVERAGE))
+            print(f"current positions - {pos} - for coin pair {coin_pair} - equal check { coin_pair in pos }")     
+            if coin_pair not in pos:
+                last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
+                #print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
+                if not last_trade_is_completed:
+                    ord = check_orders(client)
+                    for elem in ord:
+                        if not elem['symbol'] in pos:
+                            close_open_orders(client, elem['symbol'])
+                    print(f"Processing Order for {coin_pair} {trade_data['side']} side with TP - {trade_data['TP']} and SL - {trade_data['SL']}")
+                    if get_balance_usdt(client)> 0:
+                        set_mode(client, coin_pair, ORDER_TYPE)
+                        set_leverage(client, coin_pair, capital_multiplier)  
+                        amount = VOLUME * capital_multiplier  
+                        place_order(client,[coin_pair,trade_data],amount)
+                        print("order placed for {0} and total money invested {1}, leverage {2} ".format(coin_pair,amount,LEVERAGE))
+                    else:
+                        print("USDT balance is low.... Please add usdt in futures account.")
                 else:
-                    print("USDT balance is low.... Please add usdt in futures account.")
-
+                    print(f"Trade already exist for - {coin_pair}")
+                    
 
                 
 
