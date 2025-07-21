@@ -345,22 +345,22 @@ def trade_master(client):
     # Fetch all coin pairs from the database
     coin_pairs = CoinPairsList.objects.filter(is_active=True)
     for coin_pair in coin_pairs:
-        print(f"checking trades for - {coin_pair}")
-        trades = Trade.objects.filter(coinpair_name=coin_pair).order_by('trade_start_time')
+        print(f"checking trades for - {coin_pair.coinpair_name}")
+        trades = Trade.objects.filter(coinpair_name=coin_pair.coinpair_name).order_by('trade_start_time')
         if trades.exists():
             #check if trade is already placed or not
             pos = get_pos(client)  
-            print(f"current positions - {pos} - for coin pair {coin_pair} - equal check { coin_pair in pos }")    
+            print(f"current positions - {pos} - for coin pair {coin_pair.coinpair_name} - equal check { coin_pair.coinpair_name in pos }")    
             position_exist = False
-            print(f"my coin name {coin_pair} and type is {type(coin_pair)}")
+            print(f"my coin name {coin_pair.coinpair_name} and type is {type(coin_pair.coinpair_name)}")
             print(f"postion data {pos} position type {type(pos)}")
             for p in pos:
                 print(f"coin name {p} coin type {type(p)}")
-                if p == coin_pair:
+                if p == coin_pair.coinpair_name:
                     position_exist=True
                     break
-            print(f"position status for {coin_pair} is {position_exist}")
-            if coin_pair not in pos:
+            print(f"position status for {coin_pair.coinpair_name} is {position_exist}")
+            if coin_pair.coinpair_name not in pos:
                 last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
                 #print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
                 if not last_trade_is_completed:
