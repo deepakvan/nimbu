@@ -278,22 +278,23 @@ def place_order(client,signal,amount):
         try:
             #Limit_price = signal[1]['BUY_PRICE']
             #Limit_price_Trigger = signal[1]['BUY_PRICE_Trigger']
-            resp1 = client.new_order(symbol=symbol, side='BUY', type='MARKET', quantity=qty,) #price= Limit_price, stopPrice= Limit_price_Trigger, timeInForce='GTC')
+            resp1 = client.new_order(symbol=symbol, side='BUY', type='MARKET', quantity=qty) #price= Limit_price, stopPrice= Limit_price_Trigger, timeInForce='GTC')
             print("Order placed for ",symbol, signal[1]['side'])
             print(resp1)
             sleep(2)
             sl_price = signal[1]['SL']
             sl_price_trigger = signal[1]['SL_Trigger']
-            resp2 = client.new_order(symbol=symbol, side='SELL', type='STOP', timeInForce='GTC',
-                                     stopPrice=sl_price, price=sl_price, closePosition=True) #stopPrice=sl_price_trigger, price=sl_price) #closePosition=True)
+            resp2 = client.new_order(symbol=symbol, side='SELL', type='STOP_MARKET', stopPrice=sl_price, closePosition=True) 
+            # timeInForce='GTC',stopPrice=sl_price_trigger, price=sl_price) #closePosition=True)
             
             print(f"SL Order Placed for {symbol}")
             print(resp2)
             sleep(2)
             tp_price = signal[1]['TP']
             tp_price_trigger = signal[1]['TP_Trigger']
-            resp3 = client.new_order(symbol=symbol, side='SELL', type='LIMIT', timeInForce='GTC',
-                                     stopPrice=tp_price_trigger, price=tp_price, closePosition=True) #closePosition=True)
+            resp3 = client.new_order(symbol=symbol, side='SELL', type='TAKE_PROFIT_MARKET'
+                                     stopPrice=tp_price_trigger, closePosition=True) 
+            #, timeInForce='GTC',closePosition=True,, price=tp_price)
             
             print(f"TP Order Placed for {symbol}")
             print(resp3)
@@ -316,16 +317,16 @@ def place_order(client,signal,amount):
             sleep(2)
             sl_price = signal[1]['SL']
             #sl_price_trigger = signal[1]['SL_Trigger']
-            resp2 = client.new_order(symbol=symbol, side='BUY', type='STOP', timeInForce='GTC',
-                                     stopPrice=sl_price, price=sl_price, closePosition=True) #stopPrice=sl_price_trigger, price=sl_price)#closePosition=True)
-            # #, workingType="CONTRACT_PRICE" or MARK_PRICE
+            resp2 = client.new_order(symbol=symbol, side='BUY', type='STOP_MARKET', stopPrice=sl_price,  closePosition=True) 
+            #price=sl_price, timeInForce='GTC', stopPrice=sl_price_trigger, price=sl_price)#closePosition=True)
+            #, workingType="CONTRACT_PRICE" or MARK_PRICE
             print(f"SL Order Placed for {symbol}")
             print(resp2)
             sleep(2)
             tp_price = signal[1]['TP']
             tp_price_trigger = signal[1]['TP_Trigger']
-            resp3 = client.new_order(symbol=symbol, side='BUY', type='LIMIT', timeInForce='GTC',
-                                     stopPrice=tp_price_trigger,price=tp_price,closePosition=True) #closePosition=True)
+            resp3 = client.new_order(symbol=symbol, side='BUY', type='TAKE_PROFIT_MARKET', stopPrice=tp_price_trigger,closePosition=True) 
+            #price=tp_price,timeInForce='GTC',closePosition=True)
             
             print(f"TP Order Placed for {symbol}")
             print(resp3)
