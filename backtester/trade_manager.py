@@ -349,8 +349,10 @@ def trade_master(client):
         trades = Trade.objects.filter(coinpair_name=coin_pair).order_by('trade_start_time')
         if trades.exists():
             #check if trade is already placed or not
-            pos = get_pos(client)       
+            pos = get_pos(client)  
+            print(f"current positions - {pos}")     
             if coin_pair in pos:
+                    print(f"Trade already exist for - {coin_pair}")
                     continue
             last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
             #print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
