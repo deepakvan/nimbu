@@ -292,7 +292,7 @@ def place_order(client,signal,amount):
             sleep(2)
             tp_price = signal[1]['TP']
             tp_price_trigger = signal[1]['TP_Trigger']
-            resp3 = client.new_order(symbol=symbol, side='SELL', type='TAKE_PROFIT_MARKET'
+            resp3 = client.new_order(symbol=symbol, side='SELL', type='TAKE_PROFIT_MARKET',
                                      stopPrice=tp_price_trigger, closePosition=True) 
             #, timeInForce='GTC',closePosition=True,, price=tp_price)
             
