@@ -4,7 +4,7 @@ import pandas as pd
 from time import sleep
 import datetime
 MAX_CONSECUTIVE_LOSSES = 3
-VOLUME = 5.1 # volume for one order (if its 10 and leverage is 10, then you put 1 usdt to one position)
+VOLUME = 5.1 # volume for one order (if its 10 and leverage is 10, then you put your 1 usdt to one position)
 LEVERAGE = 2      # total usdt is 5*2=10 usdt
 ORDER_TYPE = 'ISOLATED'  # type is 'ISOLATED' or 'CROSS'
 
@@ -238,26 +238,27 @@ def close_open_orders(client,symbol):
 
 def remove_pending_orders_repeated(client):
     print("----Removing Pending Orders ")
-    while True:
-        try:
-            pos = get_pos(client)
-            ord = check_orders(client)
-            # removing stop orders for closed positions
-            for elem in ord:
-                if (not elem['symbol'] in pos):  #and (elem['type'] not in ['MARKET','LIMIT']):
-                    print(elem, "order removed by pending order close function")
-                    sleep(1)
-                    close_open_orders(client, elem['symbol'])
-            sleep(60)
-        except ClientError as error:
-            print(
-                "----Removing Pending Orders  Found error. status: {}, error code: {}, error message: {}".format(
-                    error.status_code, error.error_code, error.error_message
-                )
+    #while True:
+    try:
+        pos = get_pos(client)
+        ord = check_orders(client)
+        # removing stop orders for closed positions
+        for elem in ord:
+            if (not elem['symbol'] in pos):  #and (elem['type'] not in ['MARKET','LIMIT']):
+                print(elem, "order removed by pending order close function")
+                sleep(1)
+                close_open_orders(client, elem['symbol'])
+        #sleep(60)
+    except ClientError as error:
+        print(
+            "----Removing Pending Orders  Found error. status: {}, error code: {}, error message: {}".format(
+                error.status_code, error.error_code, error.error_message
             )
-            sleep(60)
-        except:
-            sleep(60)
+        )
+        #sleep(60)
+    except:
+        #sleep(60)
+        pass
 
 
 
@@ -369,6 +370,7 @@ def trade_master(client):
                         print("USDT balance is low.... Please add usdt in futures account.")
             else:
                 print(f"Trade already exist for - {coin_pair.coinpair_name}")
+    remove_pending_orders_repeated(client)
                     
 
                 
