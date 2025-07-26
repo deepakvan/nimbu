@@ -4,7 +4,7 @@ import pandas as pd
 from time import sleep
 import datetime
 MAX_CONSECUTIVE_LOSSES = 3
-VOLUME = 5.1 # volume for one order (if its 10 and leverage is 10, then you put your 1 usdt to one position)
+VOLUME = 2.6 # volume for one order (if its 10 and leverage is 10, then you put your 1 usdt to one position)
 LEVERAGE = 2      # total usdt is 5*2=10 usdt
 ORDER_TYPE = 'ISOLATED'  # type is 'ISOLATED' or 'CROSS'
 
@@ -88,7 +88,7 @@ def get_multiplier(winloss_data):
                     break
                 pending_losses-=1
 
-    if pending_losses>=MAX_LOSS_COUNTER:
+    if pending_losses>=(MAX_LOSS_COUNTER-1):
         return 2**MAX_LOSS_COUNTER
     else:
         return 2**(pending_losses+1)
@@ -353,7 +353,7 @@ def trade_master(client):
             pos = get_pos(client)  
             if coin_pair.coinpair_name not in pos:
                 last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
-                #print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
+                print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
                 if not last_trade_is_completed:
                     ord = check_orders(client)
                     for elem in ord:
