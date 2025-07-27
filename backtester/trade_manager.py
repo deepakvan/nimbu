@@ -79,16 +79,16 @@ def get_multiplier(winloss_data):
         if list_element['type']=='losses':
             pending_losses+=list_element['count']
         if list_element['type']=='wins':
-            if pending_losses<=MAX_LOSS_COUNTER:
+            if pending_losses<MAX_LOSS_COUNTER:
                 pending_losses=0
                 continue
             for i in range(list_element['count']):
-                if pending_losses<=MAX_LOSS_COUNTER:
+                if pending_losses<MAX_LOSS_COUNTER:
                     pending_losses=0
                     break
                 pending_losses-=1
 
-    if pending_losses>=(MAX_LOSS_COUNTER-1):
+    if pending_losses>(MAX_LOSS_COUNTER-1):
         return 2**MAX_LOSS_COUNTER
     else:
         return 2**(pending_losses+1)

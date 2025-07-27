@@ -242,7 +242,7 @@ def bot():
                 print(f"Starting backtest for {len(coin_pairs)} coin pairs...")
                 for coin_pair in coin_pairs:
                     hf.process_coin_pair(coin_pair.coinpair_name, history_client)
-
+                
                 trade_manager.trade_master(client)
                 print("Backtest completed for all coin pairs. sleeping for 30 seconds...")
                 sleep(30)  # Sleep for seconds 30 before the next iteration
