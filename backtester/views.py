@@ -251,7 +251,7 @@ def execute_order(coin_pair_name, order_side, order_type, order_price):
 
 def account_details(request):
     if not request.user.is_authenticated or not request.user.is_staff:
-        return redirect('login')
+        return redirect('analytics')
     if request.method == 'POST':
         # Handle form submission if needed
         coin_pair_name = request.POST.get('coin_pair_name')
