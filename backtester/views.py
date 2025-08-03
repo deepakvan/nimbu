@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
 import os
 from django.http import HttpResponse
@@ -250,6 +250,8 @@ def execute_order(coin_pair_name, order_side, order_type, order_price):
         return False, None
 
 def account_details(request):
+    if not request.user.is_authenticated or not request.user.is_staff:
+        return redirect('login')
     if request.method == 'POST':
         # Handle form submission if needed
         coin_pair_name = request.POST.get('coin_pair_name')
