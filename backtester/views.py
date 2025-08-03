@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 import os
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -227,6 +227,57 @@ def analytics_page(request):
     """
     coin_pairs = CoinPairsList.objects.all()
     return render(request, 'analytics.html', {'coin_pairs': coin_pairs})
+
+def execute_order(coin_pair_name, order_side, order_type, order_price):
+    try:
+        # Example logic to execute an order
+        print(f"Executing {order_side} order for {coin_pair_name}")
+        # Here you would add the actual order execution logic using the Binance API
+        if order_side == 'buy':
+            # Execute buy order logic
+            resp2 = client.new_order(symbol=coin_pair_name, side='BUY', type=order_type, stopPrice=order_price, closePosition=True) 
+            print(f"Buy order response for {coin_pair_name} and order type is {order_type} at price {order_price}: {resp2}")
+        elif order_side == 'sell':
+            # Execute sell order logic
+            resp2 = client.new_order(symbol=coin_pair_name, side='SELL', type=order_type, stopPrice=order_price, closePosition=True) 
+            print(f"Sell order response for {coin_pair_name} and order type is {order_type} at price {order_price}: {resp2}")
+        else:
+            print(f"Invalid order side: {order_side}")
+            return False, None
+        return True, resp2
+    except Exception as e:
+        print(f"Error executing order: {e}")
+        return False, None
+
+def account_details(request):
+    if request.method == 'POST':
+        # Handle form submission if needed
+        coin_pair_name = request.POST.get('coin_pair_name')
+        if coin_pair_name:
+            order_side = request.POST.get('order_side') #'sell' or 'buy'
+            order_type = request.POST.get('order_type') # TAKE_PROFIT_MARKET, STOP_MARKET, etc.
+            order_price = float(request.POST.get('order_price')) if request.POST.get('order_price') else None
+            if order_side and order_type and order_price is not None:
+                #success, resp = True, {"order_id": 12345}  # Mock response
+                print(f"Order execution response: {coin_pair_name}, {order_side}, {order_type}, {order_price}")
+                success, resp = execute_order(coin_pair_name, order_side, order_type, order_price)
+                # Handle the response from the order execution
+                if success:
+                    return render(request, 'account_details.html', {'response': resp, 'success': True})
+                else:
+                    return render(request, 'account_details.html', {'response': resp, 'success': False})
+            else:
+                return render(request, 'account_details.html', {'response': "Invalid order details", 'success': False})
+
+        return render(request, 'account_details.html', {'response': "Coin pair name is required", 'success': False})
+
+    """
+    Render the account details page.
+    """
+    return render(request, 'account_details.html')
+
+
+
 
 
 def bot():
