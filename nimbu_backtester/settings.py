@@ -138,8 +138,8 @@ USE_TZ = False  # Set to False to avoid timezone issues with Pandas
 API_KEY = os.environ.get("API_KEY")
 API_SECRET = os.environ.get("API_SECRET")
 
-HISTORY_API_KEY = os.environ.get("HISTORY_API_KEY")
-HISTORY_API_SECRET = os.environ.get("HISTORY_API_SECRET")
+#HISTORY_API_KEY = os.environ.get("HISTORY_API_KEY")
+#HISTORY_API_SECRET = os.environ.get("HISTORY_API_SECRET")
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/

@@ -227,6 +227,8 @@ def close_open_orders(client,symbol):
     print("----Closing Open Orders")
     try:
         response = client.cancel_open_orders(symbol=symbol, recvWindow=10000)
+        print(f"Open orders for {symbol} closed successfully.")
+        print(response)
         return response
     except ClientError as error:
         print(
@@ -245,7 +247,7 @@ def remove_pending_orders_repeated(client):
         # removing stop orders for closed positions
         for elem in ord:
             if (not elem['symbol'] in pos):  #and (elem['type'] not in ['MARKET','LIMIT']):
-                print(elem, "order removed by pending order close function")
+                #print(elem, "order removed by pending order close function")
                 sleep(1)
                 close_open_orders(client, elem['symbol'])
         #sleep(60)
@@ -360,6 +362,16 @@ def trade_master(client):
                         if not elem['symbol'] in pos:
                             close_open_orders(client, elem['symbol'])
                     print(f"Processing Order for {coin_pair} {trade_data['side']} side with TP - {trade_data['TP']} and SL - {trade_data['SL']}")
+                    current_price = float(client.ticker_price(coin_pair.coinpair_name)['price'])
+                    # Ensure current price is between TP and SL for both buy and sell trades
+                    if trade_data['side'] == 'buy':
+                        if not (trade_data['SL'] < current_price < trade_data['TP']):
+                            print(f"Current price {current_price} is not between SL {trade_data['SL']} and TP {trade_data['TP']} for buy trade. Skipping order.")
+                            continue
+                    elif trade_data['side'] == 'sell':
+                        if not (trade_data['TP'] < current_price < trade_data['SL']):
+                            print(f"Current price {current_price} is not between TP {trade_data['TP']} and SL {trade_data['SL']} for sell trade. Skipping order.")
+                            continue
                     if get_balance_usdt(client)> 0:
                         set_mode(client, coin_pair, ORDER_TYPE)
                         set_leverage(client, coin_pair, capital_multiplier)  

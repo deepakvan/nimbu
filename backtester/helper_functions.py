@@ -306,23 +306,26 @@ def process_coin_pair(coin_pair_name, client):
     historical_data_1m = fetch_historical_data(client, coin_pair_name, '1m', limit=1000)
     #print(f"last candle for {coin_pair_name}: {historical_data_1m.iloc[-1] if historical_data_1m is not None else 'None'}")
     if historical_data_1m is None:
-        #print(f"Skipping {coin_pair_name} due to data fetch error")
+        print(f"Skipping {coin_pair_name} due to data fetch error")
         return
 
     historical_data_1m['symbol'] = coin_pair_name
-
+    print(f"Fetched historical data for {coin_pair_name} with last rows")
+    print(historical_data_1m.tail(1))
     try:
         signals_df = generate_trading_signals(historical_data_1m)
         trades = Trade.objects.filter(coinpair_name=coin_pair_name).order_by('trade_start_time')
         
         if trades.exists():
             last_trade = trades.last()
+            print(f"(Trade table) Last trade for {coin_pair_name}: {last_trade}")
             if last_trade.trade_close_time is None:
+                print(f"(Trade table) Processing incomplete trade for {coin_pair_name}...")
                 signals_df = process_incomplete_trade(last_trade, signals_df, coin_pair_name)
                 if signals_df is not None and not signals_df.empty:
                     process_new_trades(signals_df, coin_pair_name)
             else:
-                #print(f"Last trade for {coin_pair_name} is already closed, processing new trades...")
+                print(f"(Trade table) Last trade for {coin_pair_name} is already closed, processing new trades...")
                 last_trade_close_time = pd.Timestamp(last_trade.trade_close_time)
                 if last_trade_close_time.tz is not None:
                     last_trade_close_time = last_trade_close_time.tz_localize(None)
@@ -336,7 +339,12 @@ def process_coin_pair(coin_pair_name, client):
             signals_df = signals_df.iloc[max(EMA_PERIOD, BB_LENGTH, ATR_PERIOD):]  # Skip initial rows for indicator warmup
             process_new_trades(signals_df, coin_pair_name)
     except Exception as e:
-        print(f"Error processing {coin_pair_name}: {str(e)}")
+        print(f"(Trade table) Error processing {coin_pair_name}: {str(e)}")
         import traceback
         traceback.print_exc()
         return
+    
+
+
+
+    
