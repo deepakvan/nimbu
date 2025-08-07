@@ -364,12 +364,21 @@ def trade_master(client):
                     print(f"Processing Order for {coin_pair} {trade_data['side']} side with TP - {trade_data['TP']} and SL - {trade_data['SL']}")
                     current_price = float(client.ticker_price(coin_pair.coinpair_name)['price'])
                     # Ensure current price is between TP and SL for both buy and sell trades
+                    entry_price = trade_data['BUY_PRICE']
+                    tp= trade_data['TP']
+                    sl = trade_data['SL']
                     if trade_data['side'] == 'buy':
-                        if not (trade_data['SL'] < current_price < trade_data['TP']):
+                        price_upper = entry_price + (tp - entry_price) * 0.2
+                        price_lower = entry_price - (entry_price - sl) * 0.2
+                        if not (price_lower < current_price < price_upper):
+                            #if not (trade_data['SL'] < current_price < trade_data['TP']):
                             print(f"Current price {current_price} is not between SL {trade_data['SL']} and TP {trade_data['TP']} for buy trade. Skipping order.")
                             continue
                     elif trade_data['side'] == 'sell':
-                        if not (trade_data['TP'] < current_price < trade_data['SL']):
+                        price_upper = entry_price + (sl - entry_price) * 0.2
+                        price_lower = entry_price - (entry_price - tp) * 0.2
+                        if not (price_lower < current_price < price_upper):
+                            #if not (trade_data['TP'] < current_price < trade_data['SL']):
                             print(f"Current price {current_price} is not between TP {trade_data['TP']} and SL {trade_data['SL']} for sell trade. Skipping order.")
                             continue
                     if get_balance_usdt(client)> 0:
