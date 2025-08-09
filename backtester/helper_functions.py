@@ -208,15 +208,18 @@ def process_incomplete_trade(last_trade, df_with_signals, coin_pair):
     """
     Process an incomplete trade by checking SL/TP and then process new trades.
     """
+    print(f"process incomplete trade {coin_pair} last trade original time {last_trade.trade_start_time}")
     last_trade_start_time = pd.Timestamp(last_trade.trade_start_time)
+    print(f"process incomplete trade {coin_pair} last trade start time after pd.timestamp {last_trade_start_time}")
     if last_trade_start_time.tz is not None:
         last_trade_start_time = last_trade_start_time.tz_localize(None)
-    
+    print(f"process incomplete trade {coin_pair} last trade start time after localize {last_trade_start_time}")
+    print(f"df with signals first trade time before localize {df_with_signals['time'].iloc[0]}")
     if df_with_signals["time"].dt.tz is not None:
         df_with_signals["time"] = df_with_signals["time"].dt.tz_localize(None)
-    
+    print(f"df with signals first trade time after localize {df_with_signals['time'].iloc[0]}")
     df_after = df_with_signals[df_with_signals["time"] >= last_trade_start_time].copy()
-    
+    print(f"df_after first trade time after old signal removal {df_after['time'].iloc[0]} and last trade time is {last_trade_start_time}")
     if df_after.empty:
         #print(f"No new data to process incomplete trade for {coin_pair}")
         return None
@@ -258,8 +261,9 @@ def process_incomplete_trade(last_trade, df_with_signals, coin_pair):
                 trade_close_time = row['time']
                 gain_percentage = ((buy_price - take_profit) / buy_price) * 100
                 break
-
+            
     if trade_closed:
+        print(f"process incomplete trade {coin_pair} last trade close time {trade_close_time}")
         last_trade.trade_close_time = trade_close_time
         last_trade.result = 'win' if trade_won else 'lose'
         last_trade.gain_percentage = gain_percentage
