@@ -88,10 +88,14 @@ def get_multiplier(winloss_data):
                     break
                 pending_losses-=1
 
+    rwt = 0 # recovery winning trades
+    if pending_losses > 2:
+        rwt = pending_losses - 2
+
     if pending_losses>(MAX_LOSS_COUNTER-1):
-        return 2**MAX_LOSS_COUNTER
+        return 2**MAX_LOSS_COUNTER, rwt
     else:
-        return 2**(pending_losses+1)
+        return 2**(pending_losses+1), rwt
 
 
 def analyze_trades(trades):
@@ -163,7 +167,7 @@ def analyze_trades(trades):
         winloss_data.append({'type': 'losses', 'count': current_losses})
 
     #print(f"win loss data - {winloss_data}")
-    capital_multiplier = get_multiplier(winloss_data)
+    capital_multiplier, rwt = get_multiplier(winloss_data)
     last_trade_is_completed = False
     if not real_trades_df.empty:
         last_trade_is_completed = real_trades_df.iloc[-1]['trade_close_time'] is not None
@@ -182,7 +186,7 @@ def analyze_trades(trades):
 
 
 
-    return  last_trade_is_completed, capital_multiplier,  trade_data
+    return  last_trade_is_completed, capital_multiplier, rwt,  trade_data
     
 
 # Your current positions (returns the symbols list):
@@ -354,8 +358,9 @@ def trade_master(client):
             #check if trade is already placed or not
             pos = get_pos(client)  
             if coin_pair.coinpair_name not in pos:
-                last_trade_is_completed, capital_multiplier, trade_data = analyze_trades(trades)
+                last_trade_is_completed, capital_multiplier, rwt, trade_data = analyze_trades(trades)
                 print(f"capital multiplier for {coin_pair} - {capital_multiplier} and last trade is completed  - {last_trade_is_completed}")
+                print(f"recovery winning trades for {coin_pair} - {rwt}")
                 if not last_trade_is_completed:
                     ord = check_orders(client)
                     for elem in ord:
